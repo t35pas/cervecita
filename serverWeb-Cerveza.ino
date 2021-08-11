@@ -179,19 +179,6 @@ int estado = 0;
 bool boton = true;
 
 void loop() {
-  //estado = 0;
-  //habilitarSiguiente();
-  //Serial.println("LOOP infinito");
-
-//  switch (estado)
-//    {
-//    case 0: break;
-//    case 1: estado1(); break;
-//    case 2: estado2(); break;
-//    case 3: estado3(); break;
-//    default: break;
-//    }
-  
 //  if ((millis() - lastTime) > gyroDelay) {
 //    // Send Events to the Web Server with the Sensor Readings
 //    events.send(getGyroReadings().c_str(),"gyro_readings",millis());
@@ -228,14 +215,18 @@ void estado0(){
 
 void estado1(){
   Serial.println("Estado 1");
-  //deshabilitarSiguiente();
+  deshabilitarSiguiente();
   String text = "Comienza calentamineto de agua a 70°C.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  delay(10000); // Pause for 10 seconds
+  //delay(2000); // Pause for 10 seconds
+  lastTime = millis();
+  if ((millis() - lastTime) > 10000){};
   text = "Agua a 70°C. Avanza a estado 2.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  delay(10000); // Pause for 10 seconds
-  estado2();
+  //delay(3000); // Pause for 10 seconds
+  lastTime = millis();
+  if ((millis() - lastTime) > 10000){};
+  avanzarEstado();
 }
 
 void estado2(){
@@ -243,7 +234,9 @@ void estado2(){
   String text = "El agua está caliente, por favor, ingrese el grano.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   habilitarSiguiente();
-  delay(10000); // Pause for 10 seconds
+  //delay(3000); // Pause for 10 seconds
+  lastTime = millis();
+  if ((millis() - lastTime) > 10000){};
 }
 
 void estado3(){
@@ -251,7 +244,9 @@ void estado3(){
   String text = "Timer de 90'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   deshabilitarSiguiente();
-  delay(10000); // Pause for 10 seconds
+  //delay(3000); // Pause for 10 seconds
+  lastTime = millis();
+  if ((millis() - lastTime) > 10000){};
   text = "Finaliza timer de 90'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   habilitarSiguiente();

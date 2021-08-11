@@ -1,0 +1,83 @@
+<!DOCTYPE HTML><html>
+<head>
+  <title>CERVECITA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js"></script>
+    <style type="text/css">
+        .auto-style1 {
+            height: 22px;
+        }
+        .auto-style2 {
+            width: 499px;
+        }
+        .auto-style3 {
+            width: 77px;
+        }
+    </style>
+</head>
+<body>
+  <div class="topnav">
+    <h1><i class="far fa-compass"></i> CERVECITA <i class="far fa-compass"></i></h1>
+  </div>
+    <table style="width:100%;">
+            <tr>
+                <td class="auto-style1" id="celdaInfo"></td>
+            </tr>
+        </table>
+	<button id="siguienteID" onclick="siguiente(this)" >Siguiente</button>
+  <div class="content">
+    <!--<div class="cards">-->
+      <!-- <div class="card">
+        <p class="card-title">GYROSCOPE</p>
+        <p><span class="reading">X: <span id="gyroX"></span> rad</span></p>
+        <p><span class="reading">Y: <span id="gyroY"></span> rad</span></p>
+        <p><span class="reading">Z: <span id="gyroZ"></span> rad</span></p>
+      </div>
+      <div class="card">
+        <p class="card-title">ACCELEROMETER</p>
+        <p><span class="reading">X: <span id="accX"></span> ms<sup>2</sup></span></p>
+        <p><span class="reading">Y: <span id="accY"></span> ms<sup>2</sup></span></p>
+        <p><span class="reading">Z: <span id="accZ"></span> ms<sup>2</sup></span></p>
+      </div> -->
+      <!-- <div class="card">
+        <p class="card-title">TEMPERATURE</p>
+        <p><span class="reading"><span id="temp"></span> &deg;C</span></p>
+        <p class="card-title">3D ANIMATION</p>
+        <button id="reset" onclick="resetPosition(this)">RESET POSITION</button>
+        <button id="resetX" onclick="resetPosition(this)">X</button>
+        <button id="resetY" onclick="resetPosition(this)">Y</button>
+        <button id="resetZ" onclick="resetPosition(this)">Z</button>
+      </div> 
+    </div>-->
+    <!--<div class="cube-content">
+      <div id="3Dcube"></div>
+    </div>-->
+      <table style="width:100%;">
+          <tr>
+              <td class="auto-style3">Paso</td>
+              <td class="auto-style2">Detalle</td>
+              <td>Estado</td>
+          </tr>
+          <tr>
+              <td class="auto-style3">1</td>
+              <td class="auto-style2">&nbsp;</td>
+              <td>
+                  <select id="Select1" name="D1">
+                      <option value="1">...</option>
+                      <option value="2">En proceso</option>
+                      <option value="3">Completado</option>
+                  </select></td>
+          </tr>
+          <tr>
+              <td class="auto-style3">2</td>
+              <td class="auto-style2">&nbsp;</td>
+              <td>&nbsp;</td>
+          </tr>
+      </table>
+  </div>
+<script src="script.js"></script>
+</body>
+</html>
