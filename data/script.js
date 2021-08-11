@@ -1,12 +1,6 @@
-/*
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp32-mpu-6050-web-server/
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
-  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 let scene, camera, rendered, cube;
+let button = document.getElementById("siguienteID");
+button.disabled = false;
 
 function parentWidth(elem) {
   return elem.parentElement.clientWidth;
@@ -103,6 +97,17 @@ if (!!window.EventSource) {
     document.getElementById("accY").innerHTML = obj.accY;
     document.getElementById("accZ").innerHTML = obj.accZ;
   }, false);
+  
+  source.addEventListener('celdaEstado_reading', function(e) {
+    console.log("celdaEstado_reading", e.data);
+	var textoCelda = document.createTextNode(e.data);
+	document.getElementById("celdaInfo").appendChild(textoCelda);
+  }, false);
+  
+  source.addEventListener('botonSiguiente_reading', function(e) {
+    console.log("botonSiguiente_reading", e.data);
+    button.disabled = e.data;
+  }, false);
 }
 
 /* function resetPosition(element){
@@ -110,4 +115,11 @@ if (!!window.EventSource) {
   xhr.open("GET", "/"+element.id, true);
   console.log(element.id);
   xhr.send(); */
+  
+  function siguiente(element){
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/siguiente", true);
+  console.log("siguienteLOG");
+  xhr.send(); 
+  //button.disabled = true;
 }
