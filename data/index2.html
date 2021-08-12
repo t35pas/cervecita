@@ -1,5 +1,7 @@
 <!DOCTYPE HTML><html>
 <head>
+    
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
   <title>CERVECITA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
@@ -8,13 +10,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js"></script>
     <style type="text/css">
         .auto-style1 {
-            height: 22px;
+            height: 171px;
         }
-        .auto-style2 {
-            width: 499px;
+        .auto-style11 {
+            height: 171px;
+            width: 189px;
         }
-        .auto-style3 {
-            width: 77px;
+        .auto-style12 {
+            height: 171px;
+            width: 349px;
         }
     </style>
 </head>
@@ -22,13 +26,49 @@
   <div class="topnav">
     <h1><i class="far fa-compass"></i> CERVECITA <i class="far fa-compass"></i></h1>
   </div>
-    <table style="width:100%;">
+    
+  <div class="content">
+
+      <table style="width:100%;">
             <tr>
-                <td class="auto-style1" id="celdaInfo"></td>
+                <td class="auto-style11" id="pasos">
+                    <table style="width:100%;">
+                        <tr>
+                            <td>
+                                <input id="inicioCB" type="checkbox" /></td>
+                            <td>Inicio</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="maceradoCB" type="checkbox" /></td>
+                            <td>Macerado</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="coccionCB" type="checkbox" /></td>
+                            <td>Cocción</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="fermentacionCB" type="checkbox" /></td>
+                            <td>Fermentación</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="finCB" type="checkbox" /></td>
+                            <td>Fin</td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="auto-style12" id="celdaInfo"></td>
+                <td class="auto-style1" id="receta">Receta<br />
+                    <br />
+                    25gr Lúpulo<br />
+                    26gr Fermentos<br />
+                    Muchos colores</td>
             </tr>
         </table>
-	<button id="siguienteID" onclick="siguiente(this)" >Siguiente</button>
-  <div class="content">
+
     <!--<div class="cards">-->
       <!-- <div class="card">
         <p class="card-title">GYROSCOPE</p>
@@ -55,29 +95,11 @@
     <!--<div class="cube-content">
       <div id="3Dcube"></div>
     </div>-->
-      <table style="width:100%;">
-          <tr>
-              <td class="auto-style3">Paso</td>
-              <td class="auto-style2">Detalle</td>
-              <td>Estado</td>
-          </tr>
-          <tr>
-              <td class="auto-style3">1</td>
-              <td class="auto-style2">&nbsp;</td>
-              <td>
-                  <select id="Select1" name="D1">
-                      <option value="1">...</option>
-                      <option value="2">En proceso</option>
-                      <option value="3">Completado</option>
-                  </select></td>
-          </tr>
-          <tr>
-              <td class="auto-style3">2</td>
-              <td class="auto-style2">&nbsp;</td>
-              <td>&nbsp;</td>
-          </tr>
-      </table>
+      <button id="siguienteID" onclick="siguiente(this)" >Siguiente</button>
+
   </div>
 <script src="script.js"></script>
+    
+	
 </body>
 </html>

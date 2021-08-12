@@ -2,19 +2,19 @@ let scene, camera, rendered, cube;
 let button = document.getElementById("siguienteID");
 button.disabled = false;
 
-function parentWidth(elem) {
+/* function parentWidth(elem) {
   return elem.parentElement.clientWidth;
 }
 
 function parentHeight(elem) {
   return elem.parentElement.clientHeight;
-}
+} */
 
 function init3D(){
-  scene = new THREE.Scene();
+  /* scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
-  camera = new THREE.PerspectiveCamera(75, parentWidth(document.getElementById("3Dcube")) / parentHeight(document.getElementById("3Dcube")), 0.1, 1000);
+  //camera = new THREE.PerspectiveCamera(75, parentWidth(document.getElementById("3Dcube")) / parentHeight(document.getElementById("3Dcube")), 0.1, 1000);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(parentWidth(document.getElementById("3Dcube")), parentHeight(document.getElementById("3Dcube")));
@@ -39,7 +39,7 @@ function init3D(){
   cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
   camera.position.z = 5;
-  renderer.render(scene, camera);
+  renderer.render(scene, camera); */
 }
 
 // Resize the 3D object when the browser window changes size
