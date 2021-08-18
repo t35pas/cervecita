@@ -44,11 +44,11 @@ function init3D(){
 
 // Resize the 3D object when the browser window changes size
 function onWindowResize(){
-  camera.aspect = parentWidth(document.getElementById("3Dcube")) / parentHeight(document.getElementById("3Dcube"));
+  //camera.aspect = parentWidth(document.getElementById("3Dcube")) / parentHeight(document.getElementById("3Dcube"));
   //camera.aspect = window.innerWidth /  window.innerHeight;
-  camera.updateProjectionMatrix();
+  //camera.updateProjectionMatrix();
   //renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setSize(parentWidth(document.getElementById("3Dcube")), parentHeight(document.getElementById("3Dcube")));
+  //renderer.setSize(parentWidth(document.getElementById("3Dcube")), parentHeight(document.getElementById("3Dcube")));
 
 }
 
@@ -99,9 +99,20 @@ if (!!window.EventSource) {
   }, false);
   
   source.addEventListener('celdaEstado_reading', function(e) {
-    console.log("celdaEstado_reading", e.data);
-	var textoCelda = document.createTextNode(e.data);
-	document.getElementById("celdaInfo").appendChild(textoCelda);
+      console.log("celdaEstado_reading", e.data);
+      try {
+          if (!document.getElementById("celdaInfo").lastChild) {
+              console.log("positivo");
+              var textoCelda = document.createTextNode(e.data);
+              document.getElementById("celdaInfo").appendChild(textoCelda);
+          } else {
+              console.log("negativo");
+              var textoCelda = document.createTextNode(e.data);
+              document.getElementById("celdaInfo").replaceChild(textoCelda,document.getElementById("celdaInfo").firstChild);
+          }
+      } catch (error) {
+        console.error(error);
+      }
   }, false);
   
   source.addEventListener('botonSiguiente_reading', function(e) {
