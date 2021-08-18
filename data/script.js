@@ -55,7 +55,7 @@ function onWindowResize(){
 window.addEventListener('resize', onWindowResize, false);
 
 // Create the 3D representation
-init3D();
+//init3D();
 
 // Create events for the sensor readings
 if (!!window.EventSource) {
@@ -122,4 +122,20 @@ if (!!window.EventSource) {
   console.log("siguienteLOG");
   xhr.send(); 
   //button.disabled = true;
+}
+
+function onLoad(){
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/estado", true);
+  console.log("obtengo estado, recargaron la pagina");
+    xhr.send(); 
+    console.log(xhr.response, xhr.responseXML, xhr.status);
+
+    if (xhr.status == 0)
+        document.querySelector('#inicioCB').checked = true;
+	var aux = xhr.response;
+    console.log(aux);
+    if (aux > 1) {
+        document.querySelector('#inicioCB').checked = true;
+    };
 }

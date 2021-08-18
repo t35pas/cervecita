@@ -20,9 +20,12 @@
             height: 171px;
             width: 349px;
         }
+        .auto-style13 {
+            height: 24px;
+        }
     </style>
 </head>
-<body>
+<body onload="onLoad()">
   <div class="topnav">
     <h1><i class="far fa-compass"></i> CERVECITA <i class="far fa-compass"></i></h1>
   </div>
@@ -34,28 +37,28 @@
                 <td class="auto-style11" id="pasos">
                     <table style="width:100%;">
                         <tr>
-                            <td>
-                                <input id="inicioCB" type="checkbox" /></td>
-                            <td>Inicio</td>
+                            <td class="auto-style13">
+                                <input id="inicioCB" type="radio" name="estados"/></td>
+                            <td class="auto-style13">Inicio</td>
                         </tr>
                         <tr>
                             <td>
-                                <input id="maceradoCB" type="checkbox" /></td>
+                                <input id="maceradoCB" type="radio"  name="estados"/></td>
                             <td>Macerado</td>
                         </tr>
                         <tr>
                             <td>
-                                <input id="coccionCB" type="checkbox" /></td>
+                                <input id="coccionCB" type="radio" name="estados"/></td>
                             <td>Cocción</td>
                         </tr>
                         <tr>
                             <td>
-                                <input id="fermentacionCB" type="checkbox" /></td>
+                                <input id="fermentacionCB" type="radio" name="estados"/></td>
                             <td>Fermentación</td>
                         </tr>
                         <tr>
                             <td>
-                                <input id="finCB" type="checkbox" /></td>
+                                <input id="finCB" type="radio" name="estados" /></td>
                             <td>Fin</td>
                         </tr>
                     </table>
