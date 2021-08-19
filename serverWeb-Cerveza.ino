@@ -27,6 +27,8 @@ unsigned long lastTimeAcc = 0;
 unsigned long gyroDelay = 10;
 unsigned long temperatureDelay = 1000;
 unsigned long accelerometerDelay = 200;
+bool flag = true;
+bool flag2 = true;
 
 // Create a sensor object
 Adafruit_MPU6050 mpu;
@@ -191,6 +193,18 @@ void setup() {
 }
 
 void loop() {
+
+//Si esta en el estado 1 prendo un timer
+  if(estado == 1 && flag){
+    lastTime = millis();
+    flag = false;
+  }
+  if (((millis() - lastTime) > 3000) && (estado==1) && flag2 && !flag) {
+    
+    avanzarEstado();
+    flag2=false;
+  }
+
 //  if ((millis() - lastTime) > gyroDelay) {
 //    // Send Events to the Web Server with the Sensor Readings
 //    events.send(getGyroReadings().c_str(),"gyro_readings",millis());
@@ -223,6 +237,8 @@ void avanzarEstado(){
 void resetear(){
   estado = 0;
   estado0();  
+  flag = true;
+  flag2=true;
 }
 
 void estado0(){
@@ -235,15 +251,14 @@ void estado1(){
   //deshabilitarSiguiente();
   String text = "Comienza calentamineto de agua a 70°C.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  //delay(2000); // Pause for 10 seconds
-  lastTime = millis();
-  if ((millis() - lastTime) > 100000){};
+  //delay(10000); // Pause for 10 seconds
+//  int i = 0;
+//  while(i < 100000000){
+//    i=i+1;
+//    }
   text = "Agua a 70°C. Avanza a estado 2.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  //delay(3000); // Pause for 10 seconds
-  lastTime = millis();
-  if ((millis() - lastTime) > 100000){};
-  
+
 }
 
 void estado2(){
@@ -252,8 +267,6 @@ void estado2(){
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //habilitarSiguiente();
   //delay(3000); // Pause for 10 seconds
-  lastTime = millis();
-  if ((millis() - lastTime) > 10000){};
 }
 
 void estado3(){
@@ -262,8 +275,10 @@ void estado3(){
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //deshabilitarSiguiente();
   //delay(3000); // Pause for 10 seconds
-  lastTime = millis();
-  if ((millis() - lastTime) > 10000){};
+  int i = 0;
+  while(i < 100000){
+    i=i+1;
+    }
   text = "Finaliza timer de 90'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //habilitarSiguiente();
