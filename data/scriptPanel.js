@@ -1,6 +1,6 @@
 let button = document.getElementById("siguienteID");
 
-window.addEventListener('resize', onWindowResize, false);
+//window.addEventListener('resize', onWindowResize, false);
 
 if (!!window.EventSource) {
   var source = new EventSource('/events');
@@ -27,5 +27,26 @@ function resetear(element) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/resetear", true);
     console.log("reseteo a estado 0");
+    xhr.send();
+}
+
+function vComenzar(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vComenzar", true);
+    console.log("vComenzar");
+    xhr.send();
+}
+
+function vEstado2(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado2", true);
+    console.log("vEstado2");
+    xhr.send();
+}
+
+function vEstado3(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado3", true);
+    console.log("vEstado3");
     xhr.send();
 }

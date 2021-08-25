@@ -39,7 +39,7 @@ float gyroX, gyroY, gyroZ;
 float accX, accY, accZ;
 float temperature;
 int estado = 0;
-bool boton = true;
+bool boton = true,vEstado2 = false, vComenzar = false, vEstado3=false;
 
 //Gyroscope sensor deviation
 float gyroXerror = 0.07;
@@ -165,6 +165,22 @@ void setup() {
     request->send(200, "text/plain", "OK");
   });
 
+  server.on("/vComenzar", HTTP_GET, [](AsyncWebServerRequest *request){
+    vComenzar=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+
+  server.on("/vEstado2", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado2=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/vEstado3", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado3=true;
+    request->send(200, "text/plain", "OK");
+  });
+
   server.on("/resetear", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Función RESETEAR");
     Serial.println("Resetea a estado 0");
@@ -193,17 +209,33 @@ void setup() {
 }
 
 void loop() {
+//En el loop verifico las variables que me hacen cambiar de estado
+if(estado == 0 && vComenzar){
+    estado1();
+    estado=estado+1;
+    vComenzar=false;
+  }
+if(estado == 1 && vEstado2){
+    estado2();
+    estado=estado+1;
+    vEstado2=false;
+  }
+if(estado == 2 && vEstado3){
+    estado3();
+    estado=estado+1;
+    vEstado3=false;
+  }
 
 //Si esta en el estado 1 prendo un timer
-  if(estado == 1 && flag){
-    lastTime = millis();
-    flag = false;
-  }
-  if (((millis() - lastTime) > 3000) && (estado==1) && flag2 && !flag) {
-    
-    avanzarEstado();
-    flag2=false;
-  }
+//  if(estado == 1 && flag){
+//    lastTime = millis();
+//    flag = false;
+//  }
+//  if (((millis() - lastTime) > 3000) && (estado==1) && flag2 && !flag) {
+//    
+//    avanzarEstado();
+//    flag2=false;
+//  }
 
 //  if ((millis() - lastTime) > gyroDelay) {
 //    // Send Events to the Web Server with the Sensor Readings
@@ -275,10 +307,6 @@ void estado3(){
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //deshabilitarSiguiente();
   //delay(3000); // Pause for 10 seconds
-  int i = 0;
-  while(i < 100000){
-    i=i+1;
-    }
   text = "Finaliza timer de 90'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //habilitarSiguiente();
