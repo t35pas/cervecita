@@ -50,3 +50,17 @@ function vEstado3(element) {
     console.log("vEstado3");
     xhr.send();
 }
+
+function vEstado4(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado4", true);
+    console.log("vEstado4");
+    xhr.send();
+}
+
+function vEstado5(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado5", true);
+    console.log("vEstado5");
+    xhr.send();
+}

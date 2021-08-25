@@ -39,7 +39,7 @@ float gyroX, gyroY, gyroZ;
 float accX, accY, accZ;
 float temperature;
 int estado = 0;
-bool boton = true,vEstado2 = false, vComenzar = false, vEstado3=false;
+bool boton = true,vEstado2 = false, vComenzar = false, vEstado3=false, vEstado4=false, vEstado5=false;
 
 //Gyroscope sensor deviation
 float gyroXerror = 0.07;
@@ -181,6 +181,16 @@ void setup() {
     request->send(200, "text/plain", "OK");
   });
 
+  server.on("/vEstado4", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado4=true;
+    request->send(200, "text/plain", "OK");
+  });
+  
+  server.on("/vEstado5", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado5=true;
+    request->send(200, "text/plain", "OK");
+  });
+  
   server.on("/resetear", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Función RESETEAR");
     Serial.println("Resetea a estado 0");
@@ -226,6 +236,12 @@ if(estado == 2 && vEstado3){
     vEstado3=false;
   }
 
+if(estado == 3 && vEstado4){
+  estado4();
+  estado=estado+1;
+  vEstado4=false;
+  }
+
 //Si esta en el estado 1 prendo un timer
 //  if(estado == 1 && flag){
 //    lastTime = millis();
@@ -262,6 +278,7 @@ void avanzarEstado(){
     case 1: estado1(); break;
     case 2: estado2(); break;
     case 3: estado3(); break;
+    case 4: estado4(); break;
     default: break;
     }
 }
@@ -284,33 +301,29 @@ void estado1(){
   String text = "Comienza calentamineto de agua a 70°C.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //delay(10000); // Pause for 10 seconds
-//  int i = 0;
-//  while(i < 100000000){
-//    i=i+1;
-//    }
-  text = "Agua a 70°C. Avanza a estado 2.";
-  events.send(text.c_str(),"celdaEstado_reading",millis());
-
 }
 
 void estado2(){
   Serial.println("Estado 2");
-  String text = "El agua está caliente, por favor, ingrese el grano.";
+  String text = "Agua a 70°C. El agua está caliente, por favor, ingrese el grano.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  //habilitarSiguiente();
-  //delay(3000); // Pause for 10 seconds
-}
+  }
 
 void estado3(){
   Serial.println("Estado 3");
-  String text = "Timer de 90'.";
+  String text = "Comienza timer de 90'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //deshabilitarSiguiente();
   //delay(3000); // Pause for 10 seconds
-  text = "Finaliza timer de 90'.";
-  events.send(text.c_str(),"celdaEstado_reading",millis());
+  
   //habilitarSiguiente();
 }
+
+void estado4(){
+  Serial.println("Estado 4");  
+  String text = "Finaliza timer de 90'.";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
 
 void habilitarSiguiente(){
   boton = true;
