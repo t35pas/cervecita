@@ -64,3 +64,45 @@ function vEstado5(element) {
     console.log("vEstado5");
     xhr.send();
 }
+
+function vEstado6(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado6", true);
+    console.log("vEstado6");
+    xhr.send();
+}
+
+function vEstado7(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado7", true);
+    console.log("vEstado7");
+    xhr.send();
+}
+
+function vEstado8(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado8", true);
+    console.log("vEstado8");
+    xhr.send();
+}
+
+function vEstado9(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado9", true);
+    console.log("vEstado9");
+    xhr.send();
+}
+
+function vEstado10(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado10", true);
+    console.log("vEstado10");
+    xhr.send();
+}
+
+function vEstado11(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado11", true);
+    console.log("vEstado11");
+    xhr.send();
+}

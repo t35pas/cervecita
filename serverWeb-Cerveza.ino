@@ -40,6 +40,7 @@ float accX, accY, accZ;
 float temperature;
 int estado = 0;
 bool boton = true,vEstado2 = false, vComenzar = false, vEstado3=false, vEstado4=false, vEstado5=false;
+bool vEstado6 = false, vEstado7=false, vEstado8=false, vEstado9=false, vEstado10=false, vEstado11=false;
 
 //Gyroscope sensor deviation
 float gyroXerror = 0.07;
@@ -185,9 +186,44 @@ void setup() {
     vEstado4=true;
     request->send(200, "text/plain", "OK");
   });
+
+  server.on("/vEstado5", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado5=true;
+    request->send(200, "text/plain", "OK");
+  });
   
   server.on("/vEstado5", HTTP_GET, [](AsyncWebServerRequest *request){
     vEstado5=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/vEstado6", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado6=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/vEstado7", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado7=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/vEstado8", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado8=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/vEstado9", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado9=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/vEstado10", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado10=true;
+    request->send(200, "text/plain", "OK");
+  });
+
+  server.on("/vEstado11", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado11=true;
     request->send(200, "text/plain", "OK");
   });
   
@@ -219,6 +255,12 @@ void setup() {
 }
 
 void loop() {
+
+  //Actualizar inputs
+  //Actualizar estado
+  //Escribir outputs
+
+  
 //En el loop verifico las variables que me hacen cambiar de estado
 if(estado == 0 && vComenzar){
     estado1();
@@ -240,6 +282,47 @@ if(estado == 3 && vEstado4){
   estado4();
   estado=estado+1;
   vEstado4=false;
+  }
+
+if(estado == 4 && vEstado5){
+  estado5();
+  estado=estado+1;
+  vEstado5=false;
+  }
+
+if(estado == 5 && vEstado6){
+  estado6();
+  estado=estado+1;
+  vEstado6=false;
+  }
+
+if(estado == 6 && vEstado7){
+  estado7();
+  estado=estado+1;
+  vEstado7=false;
+  }
+if(estado == 7 && vEstado8){
+  estado8();
+  estado=estado+1;
+  vEstado8=false;
+  }
+
+if(estado == 8 && vEstado9){
+  estado9();
+  estado=estado+1;
+  vEstado9=false;
+  }
+
+if(estado == 9 && vEstado10){
+  estado10();
+  estado=estado+1;
+  vEstado10=false;
+  }
+
+if(estado == 10 && vEstado11){
+  estado11();
+  estado=estado+1;
+  vEstado11=false;
   }
 
 //Si esta en el estado 1 prendo un timer
@@ -297,10 +380,8 @@ void estado0(){
 
 void estado1(){
   Serial.println("Estado 1");
-  //deshabilitarSiguiente();
   String text = "Comienza calentamineto de agua a 70°C.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  //delay(10000); // Pause for 10 seconds
 }
 
 void estado2(){
@@ -313,18 +394,57 @@ void estado3(){
   Serial.println("Estado 3");
   String text = "Comienza timer de 90'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  //deshabilitarSiguiente();
-  //delay(3000); // Pause for 10 seconds
-  
-  //habilitarSiguiente();
 }
 
 void estado4(){
   Serial.println("Estado 4");  
-  String text = "Finaliza timer de 90'.";
+  String text = "Finaliza timer de 90'. Retire la tela de filtrado con el grano.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   }
 
+void estado5(){
+  Serial.println("Estado 5");
+  String text = "Comienza calentamiento de mosto a 100°C";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
+
+void estado6(){
+  Serial.println("Estado 6");
+  String text = "Mosto a 100°C. Inicio timer de 60'.";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
+
+void estado7(){
+  Serial.println("Estado 7");
+  String text = "Mosto a 100°C. Inicio timer de 20' para lúpulo.";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
+
+void estado8(){
+  Serial.println("Estado 8");
+  String text = "Finaliza timer de 20'. El servo ingresa lúpulo.";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
+
+void estado9(){
+  Serial.println("Estado 9");
+  String text = "Finaliza timer de 60'. Se traspasa el mosto al tacho 2.";
+  //Abre las válvulas de pasaje
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
+
+void estado10(){
+  Serial.println("Estado 10");
+  String text = "El mosto se encuentra en el tacho 2. Ingrese las levaduras y cierre la tapa.";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
+
+void estado11(){
+  Serial.println("Estado 11");
+  String text = "Se inicia timer de 14 días.";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }
+  
 void habilitarSiguiente(){
   boton = true;
   events.send("true","botonSiguiente_reading",millis());
