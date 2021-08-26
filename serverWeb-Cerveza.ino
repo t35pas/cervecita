@@ -260,8 +260,40 @@ void loop() {
   //Actualizar estado
   //Escribir outputs
 
+  actualizarEstado();
   
-//En el loop verifico las variables que me hacen cambiar de estado
+
+
+//Si esta en el estado 1 prendo un timer
+//  if(estado == 1 && flag){
+//    lastTime = millis();
+//    flag = false;
+//  }
+//  if (((millis() - lastTime) > 3000) && (estado==1) && flag2 && !flag) {
+//    
+//    avanzarEstado();
+//    flag2=false;
+//  }
+
+//  if ((millis() - lastTime) > gyroDelay) {
+//    // Send Events to the Web Server with the Sensor Readings
+//    events.send(getGyroReadings().c_str(),"gyro_readings",millis());
+//    lastTime = millis();
+//  }
+//  if ((millis() - lastTimeAcc) > accelerometerDelay) {
+//    // Send Events to the Web Server with the Sensor Readings
+//    events.send(getAccReadings().c_str(),"accelerometer_readings",millis());
+//    lastTimeAcc = millis();
+//  }
+//  if ((millis() - lastTimeTemperature) > temperatureDelay) {
+//    // Send Events to the Web Server with the Sensor Readings
+//    events.send(getTemperature().c_str(),"temperature_reading",millis());
+//    lastTimeTemperature = millis();
+//  }
+}
+
+void actualizarEstado(){
+  //En el loop verifico las variables que me hacen cambiar de estado
 if(estado == 0 && vComenzar){
     estado1();
     estado=estado+1;
@@ -324,33 +356,6 @@ if(estado == 10 && vEstado11){
   estado=estado+1;
   vEstado11=false;
   }
-
-//Si esta en el estado 1 prendo un timer
-//  if(estado == 1 && flag){
-//    lastTime = millis();
-//    flag = false;
-//  }
-//  if (((millis() - lastTime) > 3000) && (estado==1) && flag2 && !flag) {
-//    
-//    avanzarEstado();
-//    flag2=false;
-//  }
-
-//  if ((millis() - lastTime) > gyroDelay) {
-//    // Send Events to the Web Server with the Sensor Readings
-//    events.send(getGyroReadings().c_str(),"gyro_readings",millis());
-//    lastTime = millis();
-//  }
-//  if ((millis() - lastTimeAcc) > accelerometerDelay) {
-//    // Send Events to the Web Server with the Sensor Readings
-//    events.send(getAccReadings().c_str(),"accelerometer_readings",millis());
-//    lastTimeAcc = millis();
-//  }
-//  if ((millis() - lastTimeTemperature) > temperatureDelay) {
-//    // Send Events to the Web Server with the Sensor Readings
-//    events.send(getTemperature().c_str(),"temperature_reading",millis());
-//    lastTimeTemperature = millis();
-//  }
 }
 
 void avanzarEstado(){
