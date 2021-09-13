@@ -17,9 +17,6 @@ AsyncWebServer server(80);
 // Create an Event Source on /events
 AsyncEventSource events("/events");
 
-// Json Variable to Hold Sensor Readings
-JSONVar readings;
-
 // Timer variables
 unsigned long lastTime = 0;  
 unsigned long lastTimeTemperature = 0;
@@ -33,30 +30,10 @@ bool flag2 = true;
 // Create a sensor object
 Adafruit_MPU6050 mpu;
 
-sensors_event_t a, g, temp;
-
-float gyroX, gyroY, gyroZ;
-float accX, accY, accZ;
 float temperature;
 int estado = 0;
 bool boton = true,vEstado2 = false, vComenzar = false, vEstado3=false, vEstado4=false, vEstado5=false;
 bool vEstado6 = false, vEstado7=false, vEstado8=false, vEstado9=false, vEstado10=false, vEstado11=false;
-
-//Gyroscope sensor deviation
-float gyroXerror = 0.07;
-float gyroYerror = 0.03;
-float gyroZerror = 0.01;
-
-// Init MPU6050
-void initMPU(){
-  if (!mpu.begin()) {
-    Serial.println("Failed to find MPU6050 chip");
-    while (1) {
-      delay(10);
-    }
-  }
-  Serial.println("MPU6050 Found!");
-}
 
 void initSPIFFS() {
   if (!SPIFFS.begin()) {
@@ -79,85 +56,17 @@ void initWiFi() {
   Serial.println(WiFi.localIP());
 }
 
-String getGyroReadings(){
-  mpu.getEvent(&a, &g, &temp);
-
-  float gyroX_temp = g.gyro.x;
-  if(abs(gyroX_temp) > gyroXerror)  {
-    gyroX += gyroX_temp/50.00;
-  }
-  
-  float gyroY_temp = g.gyro.y;
-  if(abs(gyroY_temp) > gyroYerror) {
-    gyroY += gyroY_temp/70.00;
-  }
-
-  float gyroZ_temp = g.gyro.z;
-  if(abs(gyroZ_temp) > gyroZerror) {
-    gyroZ += gyroZ_temp/90.00;
-  }
-
-  readings["gyroX"] = String(gyroX);
-  readings["gyroY"] = String(gyroY);
-  readings["gyroZ"] = String(gyroZ);
-
-  String jsonString = JSON.stringify(readings);
-  return jsonString;
-}
-
-String getAccReadings() {
-  mpu.getEvent(&a, &g, &temp);
-  // Get current acceleration values
-  accX = a.acceleration.x;
-  accY = a.acceleration.y;
-  accZ = a.acceleration.z;
-  readings["accX"] = String(accX);
-  readings["accY"] = String(accY);
-  readings["accZ"] = String(accZ);
-  String accString = JSON.stringify (readings);
-  return accString;
-}
-
-String getTemperature(){
-  mpu.getEvent(&a, &g, &temp);
-  temperature = temp.temperature;
-  return String(temperature);
-}
-
 void setup() {
   Serial.begin(115200);
   initWiFi();
   initSPIFFS();
-  //initMPU();
 
   // Handle Web Server
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html", "text/html");
+    request->send(SPIFFS, "/index2.html", "text/html");
   });
 
   server.serveStatic("/", SPIFFS, "/");
-
-  server.on("/reset", HTTP_GET, [](AsyncWebServerRequest *request){
-    gyroX=0;
-    gyroY=0;
-    gyroZ=0;
-    request->send(200, "text/plain", "OK");
-  });
-
-  server.on("/resetX", HTTP_GET, [](AsyncWebServerRequest *request){
-    gyroX=0;
-    request->send(200, "text/plain", "OK");
-  });
-
-  server.on("/resetY", HTTP_GET, [](AsyncWebServerRequest *request){
-    gyroY=0;
-    request->send(200, "text/plain", "OK");
-  });
-
-  server.on("/resetZ", HTTP_GET, [](AsyncWebServerRequest *request){
-    gyroZ=0;
-    request->send(200, "text/plain", "OK");
-  });
 
   server.on("/siguiente", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Función SIGUIENTE");
@@ -170,7 +79,6 @@ void setup() {
     vComenzar=true;
     request->send(200, "text/plain", "OK");
   });
-
 
   server.on("/vEstado2", HTTP_GET, [](AsyncWebServerRequest *request){
     vEstado2=true;
@@ -261,8 +169,6 @@ void loop() {
   //Escribir outputs
 
   actualizarEstado();
-  
-
 
 //Si esta en el estado 1 prendo un timer
 //  if(estado == 1 && flag){
@@ -274,87 +180,64 @@ void loop() {
 //    avanzarEstado();
 //    flag2=false;
 //  }
-
-//  if ((millis() - lastTime) > gyroDelay) {
-//    // Send Events to the Web Server with the Sensor Readings
-//    events.send(getGyroReadings().c_str(),"gyro_readings",millis());
-//    lastTime = millis();
-//  }
-//  if ((millis() - lastTimeAcc) > accelerometerDelay) {
-//    // Send Events to the Web Server with the Sensor Readings
-//    events.send(getAccReadings().c_str(),"accelerometer_readings",millis());
-//    lastTimeAcc = millis();
-//  }
-//  if ((millis() - lastTimeTemperature) > temperatureDelay) {
-//    // Send Events to the Web Server with the Sensor Readings
-//    events.send(getTemperature().c_str(),"temperature_reading",millis());
-//    lastTimeTemperature = millis();
-//  }
 }
 
 void actualizarEstado(){
   //En el loop verifico las variables que me hacen cambiar de estado
-if(estado == 0 && vComenzar){
-    estado1();
+  if(estado == 0 && vComenzar){
+      estado1();
+      estado=estado+1;
+      vComenzar=false;
+  }
+  if(estado == 1 && vEstado2){
+      estado2();
+      estado=estado+1;
+      vEstado2=false;
+  }
+  if(estado == 2 && vEstado3){
+      estado3();
+      estado=estado+1;
+      vEstado3=false;
+  }
+  if(estado == 3 && vEstado4){
+    estado4();
     estado=estado+1;
-    vComenzar=false;
+    vEstado4=false;
   }
-if(estado == 1 && vEstado2){
-    estado2();
+  if(estado == 4 && vEstado5){
+    estado5();
     estado=estado+1;
-    vEstado2=false;
+    vEstado5=false;
   }
-if(estado == 2 && vEstado3){
-    estado3();
+  if(estado == 5 && vEstado6){
+    estado6();
     estado=estado+1;
-    vEstado3=false;
+    vEstado6=false;
   }
-
-if(estado == 3 && vEstado4){
-  estado4();
-  estado=estado+1;
-  vEstado4=false;
+  if(estado == 6 && vEstado7){
+    estado7();
+    estado=estado+1;
+    vEstado7=false;
   }
-
-if(estado == 4 && vEstado5){
-  estado5();
-  estado=estado+1;
-  vEstado5=false;
+  if(estado == 7 && vEstado8){
+    estado8();
+    estado=estado+1;
+    vEstado8=false;
   }
-
-if(estado == 5 && vEstado6){
-  estado6();
-  estado=estado+1;
-  vEstado6=false;
+  if(estado == 8 && vEstado9){
+    estado9();
+    estado=estado+1;
+    vEstado9=false;
   }
-
-if(estado == 6 && vEstado7){
-  estado7();
-  estado=estado+1;
-  vEstado7=false;
+  if(estado == 9 && vEstado10){
+    estado10();
+    estado=estado+1;
+    vEstado10=false;
   }
-if(estado == 7 && vEstado8){
-  estado8();
-  estado=estado+1;
-  vEstado8=false;
-  }
-
-if(estado == 8 && vEstado9){
-  estado9();
-  estado=estado+1;
-  vEstado9=false;
-  }
-
-if(estado == 9 && vEstado10){
-  estado10();
-  estado=estado+1;
-  vEstado10=false;
-  }
-
-if(estado == 10 && vEstado11){
-  estado11();
-  estado=estado+1;
-  vEstado11=false;
+  if(estado == 10 && vEstado11){
+    estado11();
+    estado=estado+1;
+    vEstado11=false;
   }
 }
 
