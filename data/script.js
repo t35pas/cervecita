@@ -150,3 +150,11 @@ function onLoad(){
         document.querySelector('#inicioCB').checked = true;
     };
 }
+
+var img = new Image();
+var div = document.getElementById('foo');
+
+img.onload = function () {
+    div.appendChild(img);
+};
+img.src = '../data/img/estado1.jpg';

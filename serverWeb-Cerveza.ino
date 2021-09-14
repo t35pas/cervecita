@@ -6,6 +6,8 @@
 #include <Adafruit_Sensor.h>
 #include <Arduino_JSON.h>
 #include "SPIFFS.h"
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 // Replace with your network credentials
 const char* ssid = "Mi red";
@@ -55,6 +57,12 @@ void initWiFi() {
   Serial.println("");
   Serial.println(WiFi.localIP());
 }
+
+//Sensor de Temperatura
+// Setup a oneWire instance to communicate with any OneWire devices
+OneWire oneWire(4); //4 es G4 en el ESP32
+// Pass our oneWire reference to Dallas Temperature sensor 
+DallasTemperature sensors(&oneWire);
 
 void setup() {
   Serial.begin(115200);
@@ -158,8 +166,11 @@ void setup() {
     client->send("hello!", NULL, millis(), 10000);
   });
   server.addHandler(&events);
-
   server.begin();
+
+  //Sensor de temperatura
+  // Start the DS18B20 sensor
+  sensors.begin();
 }
 
 void loop() {
@@ -189,7 +200,7 @@ void actualizarEstado(){
       estado=estado+1;
       vComenzar=false;
   }
-  if(estado == 1 && vEstado2){
+  if(estado == 1 && (vEstado2 || (sensors.getTempCByIndex(0) > 70))){
       estado2();
       estado=estado+1;
       vEstado2=false;
@@ -209,7 +220,7 @@ void actualizarEstado(){
     estado=estado+1;
     vEstado5=false;
   }
-  if(estado == 5 && vEstado6){
+  if(estado == 5 && (vEstado6 || (sensors.getTempCByIndex(0) > 99))){
     estado6();
     estado=estado+1;
     vEstado6=false;
