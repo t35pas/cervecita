@@ -6,8 +6,9 @@
 #include <Adafruit_Sensor.h>
 #include <Arduino_JSON.h>
 #include "SPIFFS.h"
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <OneWire.h>            //Sensor T
+#include <DallasTemperature.h>  //Sensor T
+#include <ESP32Servo.h> //SERVO MOTOR
 
 // Replace with your network credentials
 const char* ssid = "Mi red";
@@ -20,14 +21,33 @@ AsyncWebServer server(80);
 AsyncEventSource events("/events");
 
 // Timer variables
-unsigned long lastTime = 0;  
-unsigned long lastTimeTemperature = 0;
-unsigned long lastTimeAcc = 0;
-unsigned long gyroDelay = 10;
-unsigned long temperatureDelay = 1000;
-unsigned long accelerometerDelay = 200;
-bool flag = true;
-bool flag2 = true;
+//unsigned long lastTime = 0;  
+//unsigned long lastTimeTemperature = 0;
+//unsigned long lastTimeAcc = 0;
+//unsigned long gyroDelay = 10;
+//unsigned long temperatureDelay = 1000;
+//unsigned long accelerometerDelay = 200;
+//bool flag = true;
+//bool flag2 = true;
+unsigned long lastTimeTimer90 = 0; //Timer del estado 3
+unsigned long lastTimeTimer60 = 0; //Timer del estado ..
+unsigned long lastTimeTimer45 = 0;
+bool flagTimer90 = true;
+bool flagTimer60 = true;
+bool flagTimer45 = true;
+int contadorLupulo = 0;
+
+
+//Output del sistema
+const int pinV1 = 1;  //Valvula llenado Tacho 1
+const int pinV2 = 2;  //Valvula vaciado Tacho 1
+const int pinV3 = 3;  //Valvula llenado Tacho 2
+const int pinV4 = 5;  //el pin 4 se usa en sensor de temperatura // Valvula escape Tacho 2
+const int pinSN1 = 6; //Sensor Nivel Tacho 1 
+const int pinB1 = 7;  //Bomba de traspaso de tachos
+const int pinC1 = 8;  //Calentador Tacho 1
+const int pinE1 = 9;  //Enfriador Tacho 2
+const int pinSM1 = 10; //Servo Motor Tacho 1
 
 // Create a sensor object
 Adafruit_MPU6050 mpu;
@@ -64,6 +84,13 @@ OneWire oneWire(4); //4 es G4 en el ESP32
 // Pass our oneWire reference to Dallas Temperature sensor 
 DallasTemperature sensors(&oneWire);
 
+//Servo Motor
+Servo myservo;  // create servo object to control a servo
+// twelve servo objects can be created on most boards
+int posSM1 = 0;    // variable to store the servo position
+
+
+/////////////////////////////////////////////////////////
 void setup() {
   Serial.begin(115200);
   initWiFi();
@@ -156,6 +183,12 @@ void setup() {
     request->send(200, "text/plain",  (String) estado);
   });
 
+  server.on("/data/img/estado1.jpg", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("Función obtener imagen");
+    //request->send(SPIFFS, "/data/img/estado1.jpg");
+    request->send(SPIFFS, "/data/img/estado1.jpg", "text/plain");
+  });
+
   // Handle Web Server Events
   events.onConnect([](AsyncEventSourceClient *client){
     if(client->lastId()){
@@ -171,6 +204,20 @@ void setup() {
   //Sensor de temperatura
   // Start the DS18B20 sensor
   sensors.begin();
+
+  //Define output del sistema
+  pinMode(pinV1, OUTPUT);  //Valvula llenado Tacho 1
+  pinMode(pinV2, OUTPUT);  //Valvula vaciado Tacho 1
+  pinMode(pinV3, OUTPUT);  //Valvula llenado Tacho 2
+  pinMode(pinV4, OUTPUT);  //el pin 4 se usa en sensor de temperatura // Valvula escape Tacho 2
+  pinMode(pinSN1, OUTPUT); //Sensor Nivel Tacho 1 
+  pinMode(pinB1, OUTPUT);  //Bomba de traspaso de tachos
+  pinMode(pinC1, OUTPUT);  //Calentador Tacho 1
+  pinMode(pinE1, OUTPUT);  //Enfriador Tacho 2
+  pinMode(pinSM1, OUTPUT); //Servo Motor Tacho 1
+
+  //SM01
+  myservo.attach(11);  // attaches the servo on pin 11 to the servo object
 }
 
 void loop() {
@@ -250,6 +297,18 @@ void actualizarEstado(){
     estado=estado+1;
     vEstado11=false;
   }
+
+  //Timers
+  if (((millis() - lastTimeTimer90) > 5000) && (estado==3) && flagTimer90 ) { //5400000 son 90'
+    flagTimer90=false;
+    Serial.println("Estado 3 - Finaliza Timer 90'");
+    vEstado4 = true;
+  }
+  if (((millis() - lastTimeTimer60) > 5000) && (estado==6) && flagTimer60 ) { //3600000 son 60', ojo que son 90 ahora
+    flagTimer60=false;
+    Serial.println("Estado 3 - Finaliza Timer 90'");
+    vEstado7 = true;
+  }
 }
 
 void avanzarEstado(){
@@ -268,8 +327,15 @@ void avanzarEstado(){
 void resetear(){
   estado = 0;
   estado0();  
-  flag = true;
-  flag2=true;
+  //flag = true;
+  //flag2=true;
+  contadorLupulo=0;
+  lastTimeTimer90 = 0; //Timer del estado 3
+  lastTimeTimer60 = 0; //Timer del estado ..
+  flagTimer90 = true;
+  flagTimer60 = true;
+  boton = true,vEstado2 = false, vComenzar = false, vEstado3=false, vEstado4=false, vEstado5=false;
+  vEstado6 = false, vEstado7=false, vEstado8=false, vEstado9=false, vEstado10=false, vEstado11=false;
 }
 
 void estado0(){
@@ -281,6 +347,8 @@ void estado1(){
   Serial.println("Estado 1");
   String text = "Comienza calentamineto de agua a 70°C.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  //Prender calentador
+  //Lanzar PID70
 }
 
 void estado2(){
@@ -293,6 +361,10 @@ void estado3(){
   Serial.println("Estado 3");
   String text = "Comienza timer de 90'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  
+  //Comenzar Timer de 90' minutos
+  lastTimeTimer90 = millis();
+  flagTimer90 = true;
 }
 
 void estado4(){
@@ -305,31 +377,58 @@ void estado5(){
   Serial.println("Estado 5");
   String text = "Comienza calentamiento de mosto a 100°C";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  //Lanzar PID100
   }
 
 void estado6(){
   Serial.println("Estado 6");
   String text = "Mosto a 100°C. Inicio timer de 60'.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+
+  //Comenzar Timer de 60' minutos
+  lastTimeTimer60 = millis();
+  flagTimer60 = true;
   }
 
 void estado7(){
   Serial.println("Estado 7");
-  String text = "Mosto a 100°C. Inicio timer de 20' para lúpulo.";
+  String text = "Mosto a 100°C. Inicio timer de 45' para lúpulo.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+
+  //Muevo servo a posición 1, cae primer parte del lúpulo
+  posSM1 = 60;
+  myservo.write(posSM1);
+  
+  //Iniciar Timer 45'
+  //Tiene que activarlo 2 veces
+  if(contadorLupulo < 3){
+    lastTimeTimer45 = millis();
+    flagTimer45 = true;
+    contadorLupulo=contadorLupulo+1;
   }
+}
 
 void estado8(){
   Serial.println("Estado 8");
   String text = "Finaliza timer de 20'. El servo ingresa lúpulo.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  }
+  
+  //Activar servo
+  //Muevo servo a posición 1, cae primer parte del lúpulo
+  posSM1=posSM1+60;
+  myservo.write(posSM1);
+}
 
 void estado9(){
   Serial.println("Estado 9");
   String text = "Finaliza timer de 60'. Se traspasa el mosto al tacho 2.";
   //Abre las válvulas de pasaje
   events.send(text.c_str(),"celdaEstado_reading",millis());
+
+
+  //Ver si tengo que reiniciar el servo
+  //Reinicio contador de lúpulo
+  contadorLupulo=0;
   }
 
 void estado10(){
