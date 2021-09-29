@@ -9,6 +9,7 @@
 #include <OneWire.h>            //Sensor T
 #include <DallasTemperature.h>  //Sensor T
 #include <ESP32Servo.h> //SERVO MOTOR
+#include <PIDController.hpp> //PID
 
 // Replace with your network credentials
 const char* ssid = "Mi red";
@@ -30,24 +31,29 @@ AsyncEventSource events("/events");
 //bool flag = true;
 //bool flag2 = true;
 unsigned long lastTimeTimer90 = 0; //Timer del estado 3
-unsigned long lastTimeTimer60 = 0; //Timer del estado ..
+unsigned long lastTimeTimer60 = 0; //Timer del estado 6
 unsigned long lastTimeTimer45 = 0;
-bool flagTimer90 = true;
-bool flagTimer60 = true;
-bool flagTimer45 = true;
+unsigned long lastTimeTimer14 = 0; //Timer del estado 11
+bool flagTimer90 = false;
+bool flagTimer60 = false;
+bool flagTimer45 = false;
+bool flagTimer14 = false;
 int contadorLupulo = 0;
 
 
 //Output del sistema
-const int pinV1 = 1;  //Valvula llenado Tacho 1
-const int pinV2 = 2;  //Valvula vaciado Tacho 1
-const int pinV3 = 3;  //Valvula llenado Tacho 2
-const int pinV4 = 5;  //el pin 4 se usa en sensor de temperatura // Valvula escape Tacho 2
-const int pinSN1 = 6; //Sensor Nivel Tacho 1 
-const int pinB1 = 7;  //Bomba de traspaso de tachos
-const int pinC1 = 8;  //Calentador Tacho 1
-const int pinE1 = 9;  //Enfriador Tacho 2
-const int pinSM1 = 10; //Servo Motor Tacho 1
+//PIN 4 Sensor temperatura
+//PIN 12 ServoMotor
+const int pinV1 = 13;  //Valvula llenado Tacho 1
+const int pinV2 = 16;  //Valvula vaciado Tacho 1
+const int pinV3 = 17;  //Valvula llenado Tacho 2
+const int pinT = 4; //PIN de temperatura
+const int pinV4 = 19;  //el pin 4 se usa en sensor de temperatura // Valvula escape Tacho 2
+const int pinSN1 = 21; //Sensor Nivel Tacho 1 
+const int pinB1 = 22;  //Bomba de traspaso de tachos
+const int pinC1 = 23;  //Calentador Tacho 1
+const int pinE1 = 24;  //Enfriador Tacho 2
+const int pinSM1 = 25; //Servo Motor Tacho 1
 
 // Create a sensor object
 Adafruit_MPU6050 mpu;
@@ -56,6 +62,7 @@ float temperature;
 int estado = 0;
 bool boton = true,vEstado2 = false, vComenzar = false, vEstado3=false, vEstado4=false, vEstado5=false;
 bool vEstado6 = false, vEstado7=false, vEstado8=false, vEstado9=false, vEstado10=false, vEstado11=false;
+bool PIDstatus = false, vEstado12=false;
 
 void initSPIFFS() {
   if (!SPIFFS.begin()) {
@@ -80,7 +87,7 @@ void initWiFi() {
 
 //Sensor de Temperatura
 // Setup a oneWire instance to communicate with any OneWire devices
-OneWire oneWire(4); //4 es G4 en el ESP32
+OneWire oneWire(4); //4 es G4 en el ESP32 PIN 4
 // Pass our oneWire reference to Dallas Temperature sensor 
 DallasTemperature sensors(&oneWire);
 
@@ -89,6 +96,9 @@ Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
 int posSM1 = 0;    // variable to store the servo position
 
+//PID
+PID::PIDParameters<double> parameters(4.0, 0.2, 1); //Kp, Ki y Kd
+PID::PIDController<double> pidController(parameters);
 
 /////////////////////////////////////////////////////////
 void setup() {
@@ -169,6 +179,11 @@ void setup() {
     vEstado11=true;
     request->send(200, "text/plain", "OK");
   });
+
+  server.on("/vEstado12", HTTP_GET, [](AsyncWebServerRequest *request){
+    vEstado12=true;
+    request->send(200, "text/plain", "OK");
+  });
   
   server.on("/resetear", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Función RESETEAR");
@@ -217,7 +232,11 @@ void setup() {
   pinMode(pinSM1, OUTPUT); //Servo Motor Tacho 1
 
   //SM01
-  myservo.attach(11);  // attaches the servo on pin 11 to the servo object
+  myservo.attach(12);  // attaches the servo on pin 11 to the servo object
+  //servo no puede ir en pin 11
+  
+  //PID
+  pidController.Input = analogRead(pinT);
 }
 
 void loop() {
@@ -227,6 +246,8 @@ void loop() {
   //Escribir outputs
 
   actualizarEstado();
+  if(PIDstatus)
+    controlarPID();
 
 //Si esta en el estado 1 prendo un timer
 //  if(estado == 1 && flag){
@@ -277,6 +298,11 @@ void actualizarEstado(){
     estado=estado+1;
     vEstado7=false;
   }
+  if(estado == 6 && vEstado9){
+    estado9();
+    estado=estado+3;
+    vEstado9=false;
+  }
   if(estado == 7 && vEstado8){
     estado8();
     estado=estado+1;
@@ -297,18 +323,34 @@ void actualizarEstado(){
     estado=estado+1;
     vEstado11=false;
   }
+  if(estado == 11 && vEstado12){
+    estado12();
+    estado=estado+1;
+    vEstado12=false;
+  }
 
   //Timers
-  if (((millis() - lastTimeTimer90) > 5000) && (estado==3) && flagTimer90 ) { //5400000 son 90'
+  if (((millis() - lastTimeTimer90) > 5000) && (estado==3) && flagTimer90 ) { //5400000 son 90' TODO
     flagTimer90=false;
     Serial.println("Estado 3 - Finaliza Timer 90'");
     vEstado4 = true;
   }
-  if (((millis() - lastTimeTimer60) > 5000) && (estado==6) && flagTimer60 ) { //3600000 son 60', ojo que son 90 ahora
+  if (((millis() - lastTimeTimer60) > 5000) && (estado==6) && flagTimer60 ) { //3600000 son 60', ojo que son 90 ahora TODO
     flagTimer60=false;
-    Serial.println("Estado 3 - Finaliza Timer 90'");
-    vEstado7 = true;
+    Serial.println("Estado 6 - Finaliza Timer 60'");
+    vEstado9 = true; //El estado7 es intermedio para tirar lúpulo.
   }
+  if (((millis() - lastTimeTimer14) > 5000) && (estado==11) && flagTimer14 ) { //TODO Acomodar timer
+    flagTimer14=false;
+    Serial.println("Estado 11 - Finaliza Timer 14 días.");
+    vEstado12 = true;
+  }
+}
+
+void controlarPID(){
+  pidController.Input = analogRead(pinT);
+  pidController.Update();
+  analogWrite(pinC1, pidController.Output);
 }
 
 void avanzarEstado(){
@@ -332,10 +374,13 @@ void resetear(){
   contadorLupulo=0;
   lastTimeTimer90 = 0; //Timer del estado 3
   lastTimeTimer60 = 0; //Timer del estado ..
-  flagTimer90 = true;
-  flagTimer60 = true;
+  lastTimeTimer14 = 0; //Timer del estado ..
+  flagTimer90 = false;
+  flagTimer60 = false;
+  flagTimer14 = false;
   boton = true,vEstado2 = false, vComenzar = false, vEstado3=false, vEstado4=false, vEstado5=false;
   vEstado6 = false, vEstado7=false, vEstado8=false, vEstado9=false, vEstado10=false, vEstado11=false;
+  vEstado12 = false;
 }
 
 void estado0(){
@@ -349,6 +394,9 @@ void estado1(){
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //Prender calentador
   //Lanzar PID70
+  pidController.Setpoint = 70;
+  pidController.TurnOn();
+  PIDstatus=true;
 }
 
 void estado2(){
@@ -371,6 +419,10 @@ void estado4(){
   Serial.println("Estado 4");  
   String text = "Finaliza timer de 90'. Retire la tela de filtrado con el grano.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  
+  //Apago PID
+  pidController.TurnOff();
+  PIDstatus=false;
   }
 
 void estado5(){
@@ -378,6 +430,9 @@ void estado5(){
   String text = "Comienza calentamiento de mosto a 100°C";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   //Lanzar PID100
+  pidController.Setpoint = 100;
+  pidController.TurnOn();
+  PIDstatus=true;
   }
 
 void estado6(){
@@ -422,9 +477,14 @@ void estado8(){
 void estado9(){
   Serial.println("Estado 9");
   String text = "Finaliza timer de 60'. Se traspasa el mosto al tacho 2.";
-  //Abre las válvulas de pasaje
   events.send(text.c_str(),"celdaEstado_reading",millis());
-
+  
+  //Apago PID
+  pidController.TurnOff();
+  PIDstatus=false;
+  
+  //Abre las válvulas de pasaje
+  
 
   //Ver si tengo que reiniciar el servo
   //Reinicio contador de lúpulo
@@ -441,14 +501,14 @@ void estado11(){
   Serial.println("Estado 11");
   String text = "Se inicia timer de 14 días.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
-  }
-  
-void habilitarSiguiente(){
-  boton = true;
-  events.send("true","botonSiguiente_reading",millis());
-}
 
-void deshabilitarSiguiente(){
-  boton = false;
-  events.send("false","botonSiguiente_reading",millis());
-}
+  //Inicio timer 14 días
+  lastTimeTimer14 = millis();
+  flagTimer14 = true;
+  }
+
+void estado12(){
+  Serial.println("Estado 12");
+  String text = "Fin! A beber.";
+  events.send(text.c_str(),"celdaEstado_reading",millis());
+  }

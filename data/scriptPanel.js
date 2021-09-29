@@ -106,3 +106,10 @@ function vEstado11(element) {
     console.log("vEstado11");
     xhr.send();
 }
+
+function vEstado12(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado12", true);
+    console.log("vEstado12");
+    xhr.send();
+}
