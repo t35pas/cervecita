@@ -38,6 +38,7 @@ bool flagTimer90 = false;
 bool flagTimer60 = false;
 bool flagTimer45 = false;
 bool flagTimer14 = false;
+bool flagTimer20 = false;
 int contadorLupulo = 0;
 
 
@@ -298,10 +299,10 @@ void actualizarEstado(){
     estado=estado+1;
     vEstado7=false;
   }
-  if(estado == 6 && vEstado9){
-    estado9();
-    estado=estado+3;
-    vEstado9=false;
+  if(estado == 6 && vEstado8){
+    estado8();
+    estado=estado+2;
+    vEstado8=false;
   }
   if(estado == 7 && vEstado8){
     estado8();
@@ -335,10 +336,15 @@ void actualizarEstado(){
     Serial.println("Estado 3 - Finaliza Timer 90'");
     vEstado4 = true;
   }
-  if (((millis() - lastTimeTimer60) > 5000) && (estado==6) && flagTimer60 ) { //3600000 son 60', ojo que son 90 ahora TODO
+  if (((millis() - lastTimeTimer60) > 5000) && (estado==6) && flagTimer20 ) { //3600000 son 60', ojo que son 90 ahora TODO
+    flagTimer20=false;
+    Serial.println("Estado 8 - Finaliza Timer 20'");
+    vEstado8 = true; //El estado7 es intermedio para tirar lúpulo.
+  }
+  if (((millis() - lastTimeTimer60) > 10000) && (estado==8) && flagTimer60 ) { //3600000 son 60', ojo que son 90 ahora TODO
     flagTimer60=false;
     Serial.println("Estado 6 - Finaliza Timer 60'");
-    vEstado9 = true; //El estado7 es intermedio para tirar lúpulo.
+    vEstado9 = true;
   }
   if (((millis() - lastTimeTimer14) > 5000) && (estado==11) && flagTimer14 ) { //TODO Acomodar timer
     flagTimer14=false;
@@ -377,6 +383,7 @@ void resetear(){
   lastTimeTimer14 = 0; //Timer del estado ..
   flagTimer90 = false;
   flagTimer60 = false;
+  flagTimer20 = false;
   flagTimer14 = false;
   boton = true,vEstado2 = false, vComenzar = false, vEstado3=false, vEstado4=false, vEstado5=false;
   vEstado6 = false, vEstado7=false, vEstado8=false, vEstado9=false, vEstado10=false, vEstado11=false;
@@ -443,6 +450,7 @@ void estado6(){
   //Comenzar Timer de 60' minutos
   lastTimeTimer60 = millis();
   flagTimer60 = true;
+  flagTimer20 = true;
   }
 
 void estado7(){
@@ -465,7 +473,7 @@ void estado7(){
 
 void estado8(){
   Serial.println("Estado 8");
-  String text = "Finaliza timer de 20'. El servo ingresa lúpulo.";
+  String text = "Han pasado 20'. El servo ingresa lúpulo.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   
   //Activar servo
