@@ -393,6 +393,7 @@ void resetear(){
 void estado0(){
   String text = "Pasos previos a iniciar proceso.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  events.send("0","imagenEstado",millis());
 }
 
 void estado1(){
@@ -404,12 +405,14 @@ void estado1(){
   pidController.Setpoint = 70;
   pidController.TurnOn();
   PIDstatus=true;
+  events.send("1","imagenEstado",millis());
 }
 
 void estado2(){
   Serial.println("Estado 2");
   String text = "Agua a 70°C. El agua está caliente, por favor, ingrese el grano.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  events.send("2","imagenEstado",millis());
   }
 
 void estado3(){
@@ -420,6 +423,7 @@ void estado3(){
   //Comenzar Timer de 90' minutos
   lastTimeTimer90 = millis();
   flagTimer90 = true;
+  events.send("3","imagenEstado",millis());
 }
 
 void estado4(){
@@ -430,6 +434,7 @@ void estado4(){
   //Apago PID
   pidController.TurnOff();
   PIDstatus=false;
+  events.send("4","imagenEstado",millis());
   }
 
 void estado5(){
@@ -440,6 +445,7 @@ void estado5(){
   pidController.Setpoint = 100;
   pidController.TurnOn();
   PIDstatus=true;
+  events.send("5","imagenEstado",millis());
   }
 
 void estado6(){
@@ -451,6 +457,7 @@ void estado6(){
   lastTimeTimer60 = millis();
   flagTimer60 = true;
   flagTimer20 = true;
+  events.send("6","imagenEstado",millis());
   }
 
 void estado7(){
@@ -469,6 +476,7 @@ void estado7(){
     flagTimer45 = true;
     contadorLupulo=contadorLupulo+1;
   }
+  events.send("7","imagenEstado",millis());
 }
 
 void estado8(){
@@ -480,6 +488,7 @@ void estado8(){
   //Muevo servo a posición 1, cae primer parte del lúpulo
   posSM1=posSM1+60;
   myservo.write(posSM1);
+  events.send("8","imagenEstado",millis());
 }
 
 void estado9(){
@@ -497,12 +506,14 @@ void estado9(){
   //Ver si tengo que reiniciar el servo
   //Reinicio contador de lúpulo
   contadorLupulo=0;
+  events.send("9","imagenEstado",millis());
   }
 
 void estado10(){
   Serial.println("Estado 10");
   String text = "El mosto se encuentra en el tacho 2. Ingrese las levaduras y cierre la tapa.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  events.send("10","imagenEstado",millis());
   }
 
 void estado11(){
@@ -513,10 +524,12 @@ void estado11(){
   //Inicio timer 14 días
   lastTimeTimer14 = millis();
   flagTimer14 = true;
+  events.send("11","imagenEstado",millis());
   }
 
 void estado12(){
   Serial.println("Estado 12");
   String text = "Fin! A beber.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
+  events.send("12","imagenEstado",millis());
   }

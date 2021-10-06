@@ -113,7 +113,17 @@ if (!!window.EventSource) {
       } catch (error) {
         console.error(error);
       }
-  }, false);
+    }, false);
+
+    source.addEventListener('imagenEstado', function (e) {
+        console.log("imagenEstado", e.data);
+        try {
+                var src = "img/estado"+e.data+".jpg";
+                document.getElementById("idImagen").src = src;
+        } catch (error) {
+            console.error(error);
+        }
+    }, false);  
   
   source.addEventListener('botonSiguiente_reading', function(e) {
     console.log("botonSiguiente_reading", e.data);
@@ -154,7 +164,7 @@ function onLoad(){
 var img = new Image();
 var div = document.getElementById('foo');
 
-img.onload = function () {
-    div.appendChild(img);
-};
-img.src = '../data/img/estado1.jpg';
+//img.onload = function () {
+//    div.appendChild(img);
+//};
+//img.src = 'img/estado1.jpg';
