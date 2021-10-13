@@ -127,7 +127,11 @@ if (!!window.EventSource) {
   
   source.addEventListener('botonSiguiente_reading', function(e) {
     console.log("botonSiguiente_reading", e.data);
-    button.disabled = e.data;
+      if (e.data === "true") {
+          document.getElementById("siguienteID").disabled = false;
+      } else {
+          button.disabled = true;
+      }
   }, false);
 }
 

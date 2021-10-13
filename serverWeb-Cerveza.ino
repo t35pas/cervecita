@@ -399,6 +399,8 @@ void resetear(){
   vEstado5=false, vestado7 = false, vestado8=false, vestado9=false, vestado10=false, vestado11=false;
   vestado12=false, vestado13 = false;
   digitalWrite(pinC1, LOW); //Apaga el calentador
+  //Boton siguiente
+  habilitarSiguiente();
 }
 
 void estado0(){
@@ -427,6 +429,9 @@ void estado2(){
   PIDstatus=true;
   events.send("1","imagenEstado",millis());
   digitalWrite(pinC1, HIGH);
+
+  //Boton siguiente
+  deshabilitarSiguiente();
 }
 
 void estado3(){
@@ -434,6 +439,9 @@ void estado3(){
   String text = "Agua a 70°C. El agua está caliente, por favor, ingrese el grano.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   events.send("2","imagenEstado",millis());
+
+  //Boton siguiente
+  habilitarSiguiente();
   }
 
 void estado4(){
@@ -445,6 +453,9 @@ void estado4(){
   lastTimeTimer90 = millis();
   flagTimer90 = true;
   events.send("3","imagenEstado",millis());
+
+  //Boton siguiente
+  deshabilitarSiguiente();
 }
 
 void estado5(){
@@ -457,6 +468,9 @@ void estado5(){
   PIDstatus=false;
   events.send("4","imagenEstado",millis());
   digitalWrite(pinC1, LOW);
+
+  //Boton siguiente
+  habilitarSiguiente();
   }
 
 void estado6(){
@@ -469,6 +483,9 @@ void estado6(){
   PIDstatus=true;
   events.send("5","imagenEstado",millis());
   digitalWrite(pinC1, HIGH);
+
+  //Boton siguiente
+  deshabilitarSiguiente();
   }
 
 void estado7(){
@@ -539,6 +556,9 @@ void estado11(){
   String text = "El mosto se encuentra en el tacho 2. Ingrese las levaduras y cierre la tapa.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   events.send("10","imagenEstado",millis());
+
+  //Boton siguiente
+  habilitarSiguiente();
   }
 
 void estado12(){
@@ -550,6 +570,9 @@ void estado12(){
   lastTimeTimer14 = millis();
   flagTimer14 = true;
   events.send("11","imagenEstado",millis());
+
+  //Boton siguiente
+  deshabilitarSiguiente();
   }
 
 void estado13(){
@@ -558,3 +581,13 @@ void estado13(){
   events.send(text.c_str(),"celdaEstado_reading",millis());
   events.send("12","imagenEstado",millis());
   }
+
+void habilitarSiguiente(){
+  boton = true;
+  events.send("true","botonSiguiente_reading",millis());
+}
+
+void deshabilitarSiguiente(){
+  boton = false;
+  events.send("false","botonSiguiente_reading",millis());
+}
