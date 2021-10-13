@@ -37,6 +37,13 @@ function vComenzar(element) {
     xhr.send();
 }
 
+function vEstado1(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado1", true);
+    console.log("vEstado1");
+    xhr.send();
+}
+
 function vEstado2(element) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/vEstado2", true);
@@ -111,5 +118,12 @@ function vEstado12(element) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/vEstado12", true);
     console.log("vEstado12");
+    xhr.send();
+}
+
+function vEstado13(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/vEstado13", true);
+    console.log("vEstado13");
     xhr.send();
 }
