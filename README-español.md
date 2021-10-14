@@ -31,4 +31,4 @@ Menciona las herramientas que utilizaste para crear tu proyecto
 * **Gaspar Serra** - Hardware
 
 ### Licencia 📄
-Este proyecto está bajo la Licencia [CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+Este proyecto está bajo la Licencia [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
