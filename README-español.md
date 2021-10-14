@@ -8,13 +8,13 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 Necesitas intalar estas librerías de arduino que se mencionan en la cabecera del archivo **.ino**.
 
 ### Instalación 🔧
-...
+```
 Deployear el .ino en el ESP32, utilizando el IDE Arduino.
-...
+```
 
-...
+```
 La carpeta **data** debe ser bajada a la memoria del microcontrolador utilizando la herramienta **ESP32 Sketch Data Upload**.
-...
+```
 
 
 ### Ejecutando las pruebas ⚙️
