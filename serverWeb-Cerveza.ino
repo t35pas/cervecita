@@ -45,7 +45,7 @@ int contadorLupulo = 0;
 //Output del sistema
 //PIN 4 Sensor temperatura
 //PIN 12 ServoMotor
-const int pinV1 = 26;  //Valvula llenado Tacho 1 era el 13
+const int pinV1 = 13;  //Valvula llenado Tacho 1
 const int pinV2 = 16;  //Valvula vaciado Tacho 1
 const int pinV3 = 17;  //Valvula llenado Tacho 2
 const int pinT = 4; //PIN de temperatura
@@ -54,7 +54,7 @@ const int pinSN1 = 21; //Sensor Nivel Tacho 1
 const int pinB1 = 22;  //Bomba de traspaso de tachos
 const int pinE1 = 24;  //Enfriador Tacho 2
 const int pinSM1 = 25; //Servo Motor Tacho 1
-const int pinC1 = 27;  //Calentador Tacho 1 //Creo que debería ser analógico si usamos una resistencia era el 26
+const int pinC1 = 26;  //Calentador Tacho 1 //Creo que debería ser analógico si usamos una resistencia
 
 // Create a sensor object
 Adafruit_MPU6050 mpu;
