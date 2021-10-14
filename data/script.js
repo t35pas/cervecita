@@ -132,7 +132,12 @@ if (!!window.EventSource) {
       } else {
           button.disabled = true;
       }
-  }, false);
+    }, false);
+
+    source.addEventListener('estadoProceso_reading', function (e) {
+        console.log("estadoProceso_reading", e.data);
+        document.getElementById(e.data).checked = true;
+    }, false);
 }
 
 /* function resetPosition(element){

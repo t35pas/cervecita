@@ -45,7 +45,7 @@ int contadorLupulo = 0;
 //Output del sistema
 //PIN 4 Sensor temperatura
 //PIN 12 ServoMotor
-const int pinV1 = 13;  //Valvula llenado Tacho 1
+const int pinV1 = 26;  //Valvula llenado Tacho 1 era el 13
 const int pinV2 = 16;  //Valvula vaciado Tacho 1
 const int pinV3 = 17;  //Valvula llenado Tacho 2
 const int pinT = 4; //PIN de temperatura
@@ -54,7 +54,7 @@ const int pinSN1 = 21; //Sensor Nivel Tacho 1
 const int pinB1 = 22;  //Bomba de traspaso de tachos
 const int pinE1 = 24;  //Enfriador Tacho 2
 const int pinSM1 = 25; //Servo Motor Tacho 1
-const int pinC1 = 26;  //Calentador Tacho 1 //Creo que debería ser analógico si usamos una resistencia
+const int pinC1 = 27;  //Calentador Tacho 1 //Creo que debería ser analógico si usamos una resistencia era el 26
 
 // Create a sensor object
 Adafruit_MPU6050 mpu;
@@ -401,6 +401,9 @@ void resetear(){
   digitalWrite(pinC1, LOW); //Apaga el calentador
   //Boton siguiente
   habilitarSiguiente();
+
+  //CheckBullet
+  events.send("inicioCB","estadoProceso_reading",millis());
 }
 
 void estado0(){
@@ -432,6 +435,11 @@ void estado2(){
 
   //Boton siguiente
   deshabilitarSiguiente();
+
+  //CheckBullet
+  events.send("maceradoCB","estadoProceso_reading",millis());
+
+  
 }
 
 void estado3(){
@@ -486,6 +494,9 @@ void estado6(){
 
   //Boton siguiente
   deshabilitarSiguiente();
+
+  //CheckBullet
+  events.send("coccionCB","estadoProceso_reading",millis());
   }
 
 void estado7(){
@@ -559,6 +570,9 @@ void estado11(){
 
   //Boton siguiente
   habilitarSiguiente();
+
+  //CheckBullet
+  events.send("fermentacionCB","estadoProceso_reading",millis());
   }
 
 void estado12(){
@@ -580,6 +594,8 @@ void estado13(){
   String text = "Fin! A beber.";
   events.send(text.c_str(),"celdaEstado_reading",millis());
   events.send("12","imagenEstado",millis());
+  //CheckBullet
+  events.send("finCB","estadoProceso_reading",millis());
   }
 
 void habilitarSiguiente(){
