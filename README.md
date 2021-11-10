@@ -22,7 +22,6 @@ Cuando ejecutes el código, se publicará en la consola la ip donde se accede a 
 Utilizando esa IP y accediendo a **/panel.html** podrás controlar el paso de un estado a otro.
 
 ### Construido con 🛠️
-Menciona las herramientas que utilizaste para crear tu proyecto
 
 * Arduino IDE - El entorno de desarrollo
 
